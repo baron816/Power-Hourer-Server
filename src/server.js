@@ -6,7 +6,6 @@ import bodyParser from 'body-parser';
 
 import usersRouter from './users/usersRouter';
 import playlistsRouter from './playlists/playlistsRouter';
-import itemsRouter from './playlistItems/playlistItemsRouter';
 
 const app = express();
 app.use(cors());
@@ -16,13 +15,12 @@ app.use(bodyParser.json());
 
 app.use('/users', usersRouter);
 app.use('/playlists', playlistsRouter);
-app.use('/playlistItems', itemsRouter);
 
-app.use(function(req, res, next) {
+app.use(function(req, res) {
   res.status(404).json({url: req.url});
 });
 
-app.use(function(err, req, res, next) {
+app.use(function(err, req, res) {
   res.status(500).json({
     error: err,
   });

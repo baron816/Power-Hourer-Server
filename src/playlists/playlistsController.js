@@ -1,5 +1,4 @@
 import Playlist from './playlistModel';
-import PlaylistItem from '../playlistItems/playlistItemsModel';
 
 export function playlistsIndex(req, res, next) {
   Playlist.find({})
@@ -11,48 +10,54 @@ export function playlistsIndex(req, res, next) {
 }
 
 export function playlistsCreate(req, res, next) {
-  const {owner, playlistItems, playlistId, thumbnail, title} = req.body;
-  const newPlaylist = new Playlist({owner, playlistId, thumbnail, title});
+  const newPlaylist = new Playlist(req.body);
 
   newPlaylist.save(function(err, playlist) {
     if (err) {
       next(err);
     }
 
-    playlistItems.forEach((item) => {
-      item.playlist = playlist._id;
-      const newPlaylistItem = new PlaylistItem(item);
-      newPlaylistItem.save();
-    });
-
     res.json({playlist});
   });
 }
 
-export function playlistItems(req, res, next) {
-  const {_id} = req.playlist;
+export function playlistItems(req, res) {
+  const {playlistItems} = req.playlist;
 
-  PlaylistItem
-  .find({playlist: _id})
-  .then(function(items) {
-    res.json(items || []);
-  });
+  res.json(playlistItems || []);
+}
+
+export function playlistItemShow(req, res) {
+  const playlistItem = req.playlistItem;
+
+  res.json(playlistItem || {});
 }
 
 export function playlistDelete(req, res, next) {
   const playlist = req.playlist;
 
-  PlaylistItem
-  .remove({playlist: playlist._id})
-  .then(function() {
-    return playlist.remove();
-  })
-  .then(function(removed) {
-    res.json(removed);
-  })
-  .catch(function(err) {
-    console.log('problem');
-    next(err);
+  playlist.remove(function (err, removed) {
+    if (err) {
+      next(err);
+    } else {
+      res.json(removed);
+    }
+  });
+}
+
+export function playlistItemUpdate(req, res, next) {
+  const playlist = req.playlist;
+  var item = req.playlistItem;
+  const update = req.body;
+
+  req.playlistItem = Object.assign(item, update);
+
+  playlist.save(function(err) {
+    if (err) {
+      next(err);
+    } else {
+      res.json(req.playlistItem);
+    }
   });
 }
 
@@ -69,4 +74,12 @@ export function idParam(req, res, next, id) {
   }, function(err) {
     next(err);
   });
+}
+
+export function playlistItemParam(req, res, next, itemId) {
+  const playlist = req.playlist;
+  const playlistItem = playlist.playlistItems.find((item) => String(item._id) === itemId);
+
+  req.playlistItem = playlistItem;
+  next();
 }

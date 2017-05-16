@@ -25,7 +25,7 @@ export function usersCreate(req, res, next) {
 export function userShow(req, res) {
   const user = req.user;
   res.json(user || {});
-};
+}
 
 export function userPlaylists(req, res) {
   const {_id} = req.user;
@@ -33,7 +33,7 @@ export function userPlaylists(req, res) {
   Playlist
   .find({owner: _id})
   .then(function(playlists) {
-    res.json(playlists || []);
+    res.json({_id, playlists} || {});
   });
 }
 
@@ -45,7 +45,7 @@ export function idParam(req, res, next, id) {
       req.user = user;
       next();
     } else {
-      res.status(404).json({err: "Not found"})
+      res.status(404).json({err: 'Not found'});
     }
   }, function(err) {
     next(err);
