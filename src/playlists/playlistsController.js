@@ -61,6 +61,15 @@ export function playlistItemUpdate(req, res, next) {
   });
 }
 
+export function moveItemUpdate(req, res) {
+  const playlist = req.playlist;
+  const {oldIndex, newIndex} = req.body;
+
+  playlist.movePlaylistItem(oldIndex, newIndex);
+
+  res.json(playlist._id || {});
+}
+
 export function idParam(req, res, next, id) {
   Playlist
   .findById(id)
