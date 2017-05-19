@@ -35,7 +35,7 @@ const PlaylistSchema = new mongoose.Schema({
       }
     }
   ],
-  public: {
+  exposed: {
     type: Boolean,
     default: false,
   },
