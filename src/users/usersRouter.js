@@ -1,5 +1,11 @@
 import {Router} from 'express';
-import {usersIndex, usersCreate, userShow, idParam, userPlaylists} from './usersController';
+import {
+  usersIndex,
+  userShow,
+  idParam,
+  userPlaylists,
+  findOrCreateUser
+} from './usersController';
 
 const usersRouter = new Router();
 
@@ -7,7 +13,7 @@ usersRouter.param('id', idParam);
 
 usersRouter.route('/')
   .get(usersIndex)
-  .post(usersCreate);
+  .post(findOrCreateUser);
 
 usersRouter.route('/:id')
   .get(userShow);

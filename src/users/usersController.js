@@ -10,18 +10,6 @@ export function usersIndex(req, res, next) {
   });
 }
 
-export function usersCreate(req, res, next) {
-  const newUser = new User(req.body);
-
-  newUser.save(function(err, user) {
-    if (err) {
-      next(err);
-    }
-
-    res.json({_id: user._id});
-  });
-}
-
 export function userShow(req, res) {
   const user = req.user;
   res.json(user || {});
@@ -32,8 +20,34 @@ export function userPlaylists(req, res) {
 
   Playlist
   .find({owner: _id})
-  .then(function(playlists) {
+  .then(function(playlistsData) {
+    const playlists = playlistsData.map(({_id, owner, playlistId, title, thumbnail, exposed}) => ({_id, owner, playlistId, title, thumbnail, exposed}));
     res.json({_id, playlists} || {});
+  });
+}
+
+export function findOrCreateUser(req, res, next) {
+  const {googleId} = req.body;
+
+  User.findOne({googleId})
+  .then(function (user) {
+    if (user) {
+      Playlist.find({owner: user._id})
+      .then(function(playlistsData) {
+        const playlists = playlistsData.map(({_id, owner, playlistId, title, thumbnail, exposed}) => ({_id, owner, playlistId, title, thumbnail, exposed}));
+        res.json({_id: user._id, playlists} || {});
+      });
+    } else {
+      const newUser = new User({googleId});
+
+      newUser.save(function (err, usr) {
+        if (err) {
+          next(err);
+        } else {
+          res.json({_id: usr._id, playlists: []});
+        }
+      });
+    }
   });
 }
 
