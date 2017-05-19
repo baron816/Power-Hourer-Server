@@ -8,7 +8,8 @@ import {
   playlistItemUpdate,
   idParam,
   playlistItemParam,
-  moveItemUpdate
+  moveItemUpdate,
+  playlistUpdate
 } from './playlistsController';
 
 const playlistsRouter = new Router();
@@ -24,6 +25,7 @@ playlistsRouter.route('/:id/playlistItems')
   .get(playlistItems);
 
 playlistsRouter.route('/:id/')
+  .put(playlistUpdate)
   .delete(playlistDelete);
 
 playlistsRouter.route('/:id/moveItem')

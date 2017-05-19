@@ -70,6 +70,22 @@ export function moveItemUpdate(req, res) {
   res.json(playlist._id || {});
 }
 
+export function playlistUpdate(req, res, next) {
+  const playlist = req.playlist;
+  const update = req.body;
+
+  req.playlist = Object.assign(playlist, update);
+
+  req.playlist.save(function (err, playlist) {
+    if (err) {
+      next(err);
+    } else {
+      const { _id, exposed, thumbnail, playlistId, owner, title } = playlist;
+      res.json({ _id, exposed, thumbnail, playlistId, owner, title } || {});
+    }
+  });
+}
+
 export function idParam(req, res, next, id) {
   Playlist
   .findById(id)
