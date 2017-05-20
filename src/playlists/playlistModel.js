@@ -1,4 +1,5 @@
 import {mongoose} from '../config/config';
+import mongoosePaginate from 'mongoose-paginate';
 
 const PlaylistSchema = new mongoose.Schema({
   owner: {
@@ -37,7 +38,7 @@ const PlaylistSchema = new mongoose.Schema({
   ],
   exposed: {
     type: Boolean,
-    default: false,
+    default: true,
   },
   playCount: {
     type: Number,
@@ -58,5 +59,7 @@ PlaylistSchema.methods = {
     this.save();
   }
 };
+
+PlaylistSchema.plugin(mongoosePaginate);
 
 export default mongoose.model('playlist', PlaylistSchema);

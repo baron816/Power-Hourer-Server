@@ -1,9 +1,13 @@
 import Playlist from './playlistModel';
 
 export function playlistsIndex(req, res, next) {
-  Playlist.find({})
-  .then(function(posts) {
-    res.json(posts);
+  const {page} = req.query;
+
+  Playlist
+  .paginate({exposed: true}, {limit: 25, page: page || 1})
+  .then(function({docs, page, pages, total}) {
+    const playlists = docs.map(({_id, owner, playlistId, thumbnail, title}) => ({_id, owner, playlistId, thumbnail, title}));
+    res.json({playlists, page, pages, total});
   }, function(err) {
     next(err);
   });
