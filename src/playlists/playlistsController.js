@@ -4,9 +4,9 @@ export function playlistsIndex(req, res, next) {
   const {page} = req.query;
 
   Playlist
-  .paginate({exposed: true}, {limit: 25, page: page || 1})
+  .paginate({exposed: true}, {sort: '-playCount', limit: 25, page: page || 1})
   .then(function({docs, page, pages, total}) {
-    const playlists = docs.map(({_id, owner, playlistId, thumbnail, title}) => ({_id, owner, playlistId, thumbnail, title}));
+    const playlists = docs.map(({_id, owner, playlistId, thumbnail, title, playCount}) => ({_id, owner, playlistId, thumbnail, title, playCount}));
     res.json({playlists, page, pages, total});
   }, function(err) {
     next(err);
@@ -45,6 +45,20 @@ export function playlistDelete(req, res, next) {
       next(err);
     } else {
       res.json(removed);
+    }
+  });
+}
+
+export function playlistIncrementPlayCount(req, res, next) {
+  const playlist = req.playlist;
+
+  playlist.playCount += 1;
+
+  playlist.save(function (err) {
+    if (err) {
+      next(err);
+    } else {
+      res.json(playlist._id);
     }
   });
 }
