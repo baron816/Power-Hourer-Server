@@ -4,7 +4,6 @@ import {
   playlistsCreate,
   playlistItems,
   playlistDelete,
-  playlistItemShow,
   playlistItemUpdate,
   idParam,
   playlistItemParam,
@@ -36,7 +35,6 @@ playlistsRouter.route('/:id/moveItem')
   .put(moveItemUpdate);
 
 playlistsRouter.route('/:id/playlistItems/:itemId')
-  .put(playlistItemUpdate)
-  .get(playlistItemShow);
+  .put(playlistItemUpdate);
 
 export default playlistsRouter;

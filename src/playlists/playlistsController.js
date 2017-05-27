@@ -31,12 +31,6 @@ export function playlistItems(req, res) {
   res.json(playlistItems || []);
 }
 
-export function playlistItemShow(req, res) {
-  const playlistItem = req.playlistItem;
-
-  res.json(playlistItem || {});
-}
-
 export function playlistDelete(req, res, next) {
   const playlist = req.playlist;
 
