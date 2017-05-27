@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+require('dotenv').config();
 
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
