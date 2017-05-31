@@ -6,6 +6,6 @@ export default {
 };
 
 mongoose.Promise = bluebird;
-mongoose.connect(process.env.MONGO_URL || 'mongodb://localhost:27017/power-hourer');
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/power-hourer');
 
 export {mongoose};
