@@ -1,0 +1,17 @@
+version: "2"
+services:
+  web:
+    build: .
+    volumes:
+      - ./:/usr/src/app
+    ports:
+      - "8000:8080"
+    links:
+      - db
+    environment:
+      NODE_ENV: development
+      MONGO_URL: mongodb://db:27017/power-hourer
+  db:
+    image: mongo
+    ports:
+      - "27017:27017"

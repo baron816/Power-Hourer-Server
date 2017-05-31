@@ -1,0 +1,17 @@
+version: "2"
+services:
+  web:
+    build: .
+    volumes:
+      - ./:/usr/src/app
+    ports:
+      - "80:8080"
+    links:
+      - db
+    environment:
+      NODE_ENV: production
+      MONGO_URL: mongodb://baronwilleford:8hdXLvg2@ds155841.mlab.com:55841/power-hourer
+  db:
+    image: mongo
+    ports:
+      - "27017:27017"
