@@ -4,7 +4,7 @@
   "description": "Backend for making power hours",
   "main": "index.js",
   "scripts": {
-    "start-dev": "nodemon index.js --exec babel-node .babelrc",
+    "start-dev": "nodemon ./src/index.js --exec babel-node .babelrc",
     "clean": "rm -rf dist && mkdir dist",
     "build-server": "babel -d ./dist ./src -s",
     "build": "npm run clean && npm run build-server",
