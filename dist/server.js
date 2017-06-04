@@ -30,8 +30,6 @@ var _playlistsRouter2 = _interopRequireDefault(_playlistsRouter);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-require('dotenv').config();
-
 var app = (0, _express2.default)();
 app.use((0, _cors2.default)());
 

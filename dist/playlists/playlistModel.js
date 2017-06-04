@@ -22,6 +22,8 @@ var PlaylistSchema = new _config.mongoose.Schema({
     type: String,
     required: true
   },
+  defaultStart: Number,
+  defaultLength: Number,
   thumbnail: {
     type: String,
     required: true
@@ -32,6 +34,7 @@ var PlaylistSchema = new _config.mongoose.Schema({
   },
   playlistItems: [{
     startTime: Number,
+    videoLength: Number,
     videoId: {
       type: String,
       required: true

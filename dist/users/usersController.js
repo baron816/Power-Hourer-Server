@@ -5,7 +5,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.userPlaylists = userPlaylists;
 exports.findOrCreateUser = findOrCreateUser;
-exports.idParam = idParam;
 
 var _userModel = require('./userModel');
 
@@ -18,6 +17,8 @@ var _playlistModel2 = _interopRequireDefault(_playlistModel);
 var _googleAuthLibrary = require('google-auth-library');
 
 var _googleAuthLibrary2 = _interopRequireDefault(_googleAuthLibrary);
+
+var _auth = require('../auth/auth');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -35,7 +36,7 @@ function userPlaylists(req, res) {
           exposed = _ref.exposed;
       return { _id: _id, owner: owner, playlistId: playlistId, title: title, thumbnail: thumbnail, exposed: exposed };
     });
-    res.json({ _id: _id, playlists: playlists } || {});
+    res.json({ playlists: playlists } || {});
   });
 }
 
@@ -65,7 +66,9 @@ function findOrCreateUser(req, res, next) {
                   exposed = _ref2.exposed;
               return { _id: _id, owner: owner, playlistId: playlistId, title: title, thumbnail: thumbnail, exposed: exposed };
             });
-            res.json({ _id: user._id, playlists: playlists } || {});
+
+            var token = (0, _auth.signToken)(user._id);
+            res.json({ token: token, playlists: playlists } || {});
           });
         } else {
           var newUser = new _userModel2.default({ googleId: googleId });
@@ -74,7 +77,8 @@ function findOrCreateUser(req, res, next) {
             if (err) {
               next(err);
             } else {
-              res.json({ _id: usr._id, playlists: [] });
+              var token = (0, _auth.signToken)(usr._id);
+              res.json({ token: token, playlists: [] });
             }
           });
         }
@@ -83,16 +87,18 @@ function findOrCreateUser(req, res, next) {
   });
 }
 
-function idParam(req, res, next, id) {
-  _userModel2.default.findById(id).then(function (user) {
-    if (user) {
-      req.user = user;
-      next();
-    } else {
-      res.status(404).json({ err: 'Not found' });
-    }
-  }, function (err) {
-    next(err);
-  });
-}
+// export function idParam(req, res, next, id) {
+//   User
+//   .findById(id)
+//   .then(function(user) {
+//     if (user) {
+//       req.user = user;
+//       next();
+//     } else {
+//       res.status(404).json({err: 'Not found'});
+//     }
+//   }, function(err) {
+//     next(err);
+//   });
+// }
 //# sourceMappingURL=usersController.js.map

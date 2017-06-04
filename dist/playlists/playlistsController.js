@@ -46,6 +46,8 @@ function playlistsIndex(req, res, next) {
 }
 
 function playlistsCreate(req, res, next) {
+  req.body.owner = req.user._id;
+
   var newPlaylist = new _playlistModel2.default(req.body);
 
   newPlaylist.save(function (err, playlist) {
@@ -108,6 +110,7 @@ function playlistItemUpdate(req, res, next) {
 
 function moveItemUpdate(req, res) {
   var playlist = req.playlist;
+
   var _req$body = req.body,
       oldIndex = _req$body.oldIndex,
       newIndex = _req$body.newIndex;

@@ -15,8 +15,12 @@ var _bluebird2 = _interopRequireDefault(_bluebird);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+require('dotenv').config();
+
 exports.default = {
-  port: process.env.PORT || 8000
+  port: process.env.PORT || 8000,
+  expireTime: 24 * 60 * 90,
+  secret: process.env.JWT_SECRET
 };
 
 
