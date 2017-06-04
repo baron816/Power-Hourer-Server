@@ -11,6 +11,8 @@ const PlaylistSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  defaultStart: Number,
+  defaultLength: Number,
   thumbnail: {
     type: String,
     required: true,
@@ -22,6 +24,7 @@ const PlaylistSchema = new mongoose.Schema({
   playlistItems: [
     {
       startTime: Number,
+      videoLength: Number,
       videoId: {
         type: String,
         required: true,
