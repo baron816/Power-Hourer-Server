@@ -1,6 +1,7 @@
 import User from './userModel';
 import Playlist from '../playlists/playlistModel';
 import GoogleAuth from 'google-auth-library';
+import { signToken } from '../auth/auth';
 
 export function userPlaylists(req, res) {
   const {_id} = req.user;
@@ -9,7 +10,7 @@ export function userPlaylists(req, res) {
   .find({owner: _id})
   .then(function(playlistsData) {
     const playlists = playlistsData.map(({_id, owner, playlistId, title, thumbnail, exposed}) => ({_id, owner, playlistId, title, thumbnail, exposed}));
-    res.json({_id, playlists} || {});
+    res.json({playlists} || {});
   });
 }
 
@@ -35,7 +36,9 @@ export function findOrCreateUser(req, res, next) {
             Playlist.find({owner: user._id})
             .then(function(playlistsData) {
               const playlists = playlistsData.map(({_id, owner, playlistId, title, thumbnail, exposed}) => ({_id, owner, playlistId, title, thumbnail, exposed}));
-              res.json({_id: user._id, playlists} || {});
+
+              const token = signToken(user._id);
+              res.json({token, playlists} || {});
             });
           } else {
             const newUser = new User({googleId});
@@ -44,7 +47,8 @@ export function findOrCreateUser(req, res, next) {
               if (err) {
                 next(err);
               } else {
-                res.json({_id: usr._id, playlists: []});
+                const token = signToken(usr._id);
+                res.json({token, playlists: []});
               }
             });
           }
@@ -55,17 +59,17 @@ export function findOrCreateUser(req, res, next) {
 
 }
 
-export function idParam(req, res, next, id) {
-  User
-  .findById(id)
-  .then(function(user) {
-    if (user) {
-      req.user = user;
-      next();
-    } else {
-      res.status(404).json({err: 'Not found'});
-    }
-  }, function(err) {
-    next(err);
-  });
-}
+// export function idParam(req, res, next, id) {
+//   User
+//   .findById(id)
+//   .then(function(user) {
+//     if (user) {
+//       req.user = user;
+//       next();
+//     } else {
+//       res.status(404).json({err: 'Not found'});
+//     }
+//   }, function(err) {
+//     next(err);
+//   });
+// }

@@ -14,6 +14,8 @@ export function playlistsIndex(req, res, next) {
 }
 
 export function playlistsCreate(req, res, next) {
+  req.body.owner = req.user._id;
+
   const newPlaylist = new Playlist(req.body);
 
   newPlaylist.save(function(err, playlist) {
@@ -59,7 +61,7 @@ export function playlistIncrementPlayCount(req, res, next) {
 
 export function playlistItemUpdate(req, res, next) {
   const playlist = req.playlist;
-  var item = req.playlistItem;
+  const item = req.playlistItem;
   const update = req.body;
 
   req.playlistItem = Object.assign(item, update);
@@ -75,6 +77,7 @@ export function playlistItemUpdate(req, res, next) {
 
 export function moveItemUpdate(req, res) {
   const playlist = req.playlist;
+
   const {oldIndex, newIndex} = req.body;
 
   playlist.movePlaylistItem(oldIndex, newIndex);
