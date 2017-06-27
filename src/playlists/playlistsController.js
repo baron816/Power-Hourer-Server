@@ -95,8 +95,8 @@ export function playlistUpdate(req, res, next) {
     if (err) {
       next(err);
     } else {
-      const { _id, exposed, thumbnail, playlistId, owner, title } = playlist;
-      res.json({ _id, exposed, thumbnail, playlistId, owner, title } || {});
+      const { _id, exposed, thumbnail, playlistId, owner, title, defaultStart, defaultLength } = playlist;
+      res.json({ _id, exposed, thumbnail, playlistId, owner, title, defaultStart, defaultLength } || {});
     }
   });
 }
