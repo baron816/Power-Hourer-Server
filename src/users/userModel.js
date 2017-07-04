@@ -1,4 +1,5 @@
-import {mongoose} from '../config/config';
+// import {mongoose} from '../config/config';
+import mongoose from 'mongoose'
 
 const UserSchema = new mongoose.Schema({
   googleId: {

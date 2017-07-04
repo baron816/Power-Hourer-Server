@@ -1,4 +1,4 @@
-import {mongoose} from '../config/config';
+import mongoose from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate';
 
 const PlaylistSchema = new mongoose.Schema({
@@ -60,6 +60,15 @@ PlaylistSchema.methods = {
     }
     array.splice(newIndex, 0, array.splice(previousIndex, 1)[0]);
     this.save();
+  },
+
+  excludeKeys(...args) {
+    return Object.keys(this._doc).reduce(function (acc, key) {
+      if (!args.includes(key)) {
+        acc[key] = this._doc[key];
+      }
+      return acc;
+    }.bind(this), {});
   }
 };
 

@@ -4,26 +4,40 @@ import cors from 'cors';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
 
+import setUpMongoose from './config/setup-mongoose'
+import config from './config/config';
 import usersRouter from './users/usersRouter';
 import playlistsRouter from './playlists/playlistsRouter';
 
-const app = express();
-app.use(cors());
+export default async function start() {
+  const app = express();
+  app.use(cors());
 
-app.use(morgan('combined'));
-app.use(bodyParser.json());
+  app.use(morgan('combined'));
+  app.use(bodyParser.json());
 
-app.use('/users', usersRouter);
-app.use('/playlists', playlistsRouter);
+  const { cleanup } = await setUpMongoose();
 
-app.use(function(req, res) {
-  res.status(404).json({url: req.url});
-});
+  app.use('/users', usersRouter);
+  app.use('/playlists', playlistsRouter);
 
-app.use(function(err, req, res) {
-  res.status(500).json({
-    error: err,
+  app.use(function(req, res) {
+    res.status(404).json({url: req.url});
   });
-});
 
-export default app;
+  app.use(function(err, req, res) {
+    res.status(500).json({
+      error: err,
+    });
+  });
+
+  return new Promise(function (resolve) {
+    const server = app.listen(config.port, function () {
+      console.log(`Listening on port ${config.port}`)
+      server.on('close', function () {
+        cleanup()
+      });
+      resolve(server)
+    });
+  });
+}

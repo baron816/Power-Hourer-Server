@@ -2,74 +2,39 @@ import User from './userModel';
 import Playlist from '../playlists/playlistModel';
 import GoogleAuth from 'google-auth-library';
 import { signToken } from '../auth/auth';
+import googleAuth from '../auth/googleAuth';
 
-export function userPlaylists(req, res) {
+export async function userPlaylists(req, res) {
   const {_id} = req.user;
 
-  Playlist
-  .find({owner: _id})
-  .then(function(playlistsData) {
-    const playlists = playlistsData.map(({_id, owner, playlistId, title, thumbnail, exposed}) => ({_id, owner, playlistId, title, thumbnail, exposed}));
-    res.json({playlists} || {});
-  });
+  var playlistsData = await Playlist.find({owner: _id})
+  const playlists = playlistsData.map(({_id, owner, playlistId, title, thumbnail, exposed}) => ({_id, owner, playlistId, title, thumbnail, exposed}));
+
+  res.json({playlists} || {});
 }
 
-export function findOrCreateUser(req, res, next) {
-  const auth = new GoogleAuth;
-  const client = new auth.OAuth2(process.env.CLIENT_ID);
-
+export async function findOrCreateUser(req, res, next) {
   const {authorization: idToken} = req.headers;
 
-  client.verifyIdToken(
-    idToken,
-    process.env.CLIENT_ID,
-    function (err, login) {
-      if (err) {
-        next(err);
-      } else {
-        const payload = login.getPayload();
-        const googleId = payload['sub'];
+  googleAuth(next, idToken, async function (googleId) {
+    var user = await User.findOne({googleId});
 
-        User.findOne({googleId})
-        .then(function (user) {
-          if (user) {
-            Playlist.find({owner: user._id})
-            .then(function(playlistsData) {
-              const playlists = playlistsData.map(({_id, owner, playlistId, title, thumbnail, exposed}) => ({_id, owner, playlistId, title, thumbnail, exposed}));
+    if (user) {
+      var playlistsData = await Playlist.find({owner: user._id})
+      const playlists = playlistsData.map(playlist => playlist.excludeKeys('playlistItems'));
 
-              const token = signToken(user._id);
-              res.json({token, playlists} || {});
-            });
-          } else {
-            const newUser = new User({googleId});
+      const token = signToken(user._id);
+      res.json({token, playlists} || {});
+    } else {
+      const newUser = new User({googleId});
 
-            newUser.save(function (err, usr) {
-              if (err) {
-                next(err);
-              } else {
-                const token = signToken(usr._id);
-                res.json({token, playlists: []});
-              }
-            });
-          }
-        });
+      try {
+        var usr = newUser.save();
+        const token = signToken(usr._id);
+        res.json({token, playlists: []})
+      } catch (e) {
+        next(err)
       }
     }
-  );
-
+  })
 }
-
-// export function idParam(req, res, next, id) {
-//   User
-//   .findById(id)
-//   .then(function(user) {
-//     if (user) {
-//       req.user = user;
-//       next();
-//     } else {
-//       res.status(404).json({err: 'Not found'});
-//     }
-//   }, function(err) {
-//     next(err);
-//   });
-// }
