@@ -2,6 +2,7 @@
 
 .env
 npm-debug.log*
+coverage/
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
