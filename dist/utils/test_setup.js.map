@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/utils/test_setup.js"],"names":["process","env","NODE_ENV","Promise"],"mappings":";;AAAA;;;;;;AAEAA,QAAQC,GAAR,CAAYC,QAAZ,GAAuB,MAAvB;AACA,mBAASC,OAAT,GAAmBA,OAAnB","file":"test_setup.js","sourcesContent":["import mongoose from 'mongoose';\n\nprocess.env.NODE_ENV = 'test';\nmongoose.Promise = Promise;\n"]}

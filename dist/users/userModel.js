@@ -4,16 +4,19 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _config = require('../config/config');
+var _mongoose = require('mongoose');
 
-var UserSchema = new _config.mongoose.Schema({
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var UserSchema = new _mongoose2.default.Schema({
   googleId: {
     type: String,
     required: true,
     unique: true,
     index: true
   }
-});
-
-exports.default = _config.mongoose.model('users', UserSchema);
+}); // import {mongoose} from '../config/config';
+exports.default = _mongoose2.default.model('users', UserSchema);
 //# sourceMappingURL=userModel.js.map

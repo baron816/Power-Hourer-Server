@@ -4,7 +4,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _config = require('../config/config');
+var _mongoose = require('mongoose');
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
 
 var _mongoosePaginate = require('mongoose-paginate');
 
@@ -12,9 +14,9 @@ var _mongoosePaginate2 = _interopRequireDefault(_mongoosePaginate);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var PlaylistSchema = new _config.mongoose.Schema({
+var PlaylistSchema = new _mongoose2.default.Schema({
   owner: {
-    type: _config.mongoose.Schema.Types.ObjectId,
+    type: _mongoose2.default.Schema.Types.ObjectId,
     ref: 'user',
     required: true
   },
@@ -69,10 +71,22 @@ PlaylistSchema.methods = {
     }
     array.splice(newIndex, 0, array.splice(previousIndex, 1)[0]);
     this.save();
+  },
+  excludeKeys: function excludeKeys() {
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return Object.keys(this._doc).reduce(function (acc, key) {
+      if (!args.includes(key)) {
+        acc[key] = this._doc[key];
+      }
+      return acc;
+    }.bind(this), {});
   }
 };
 
 PlaylistSchema.plugin(_mongoosePaginate2.default);
 
-exports.default = _config.mongoose.model('playlist', PlaylistSchema);
+exports.default = _mongoose2.default.model('playlist', PlaylistSchema);
 //# sourceMappingURL=playlistModel.js.map

@@ -9,6 +9,8 @@ exports.playlistItems = playlistItems;
 exports.playlistDelete = playlistDelete;
 exports.playlistIncrementPlayCount = playlistIncrementPlayCount;
 exports.playlistItemUpdate = playlistItemUpdate;
+exports.playlistItemDelete = playlistItemDelete;
+exports.playlistItemAdd = playlistItemAdd;
 exports.moveItemUpdate = moveItemUpdate;
 exports.playlistUpdate = playlistUpdate;
 exports.idParam = idParam;
@@ -30,14 +32,8 @@ function playlistsIndex(req, res, next) {
         pages = _ref.pages,
         total = _ref.total;
 
-    var playlists = docs.map(function (_ref2) {
-      var _id = _ref2._id,
-          owner = _ref2.owner,
-          playlistId = _ref2.playlistId,
-          thumbnail = _ref2.thumbnail,
-          title = _ref2.title,
-          playCount = _ref2.playCount;
-      return { _id: _id, owner: owner, playlistId: playlistId, thumbnail: thumbnail, title: title, playCount: playCount };
+    var playlists = docs.map(function (playlist) {
+      return playlist.excludeKeys('playlistItems');
     });
     res.json({ playlists: playlists, page: page, pages: pages, total: total });
   }, function (err) {
@@ -108,6 +104,32 @@ function playlistItemUpdate(req, res, next) {
   });
 }
 
+function playlistItemDelete(req, res, next) {
+  var playlist = req.playlist;
+  var item = req.playlistItem;
+
+  _playlistModel2.default.update({ _id: playlist._id }, { $pull: { playlistItems: { _id: item._id } } }, function (err) {
+    if (err) {
+      next();
+    } else {
+      res.json(item._id);
+    }
+  });
+}
+
+function playlistItemAdd(req, res, next) {
+  var playlist = req.playlist;
+  var item = req.body;
+
+  _playlistModel2.default.update({ _id: playlist._id }, { $push: { playlistItems: item } }, function (err) {
+    if (err) {
+      next();
+    } else {
+      res.json(item);
+    }
+  });
+}
+
 function moveItemUpdate(req, res) {
   var playlist = req.playlist;
 
@@ -131,14 +153,7 @@ function playlistUpdate(req, res, next) {
     if (err) {
       next(err);
     } else {
-      var _id = playlist._id,
-          exposed = playlist.exposed,
-          thumbnail = playlist.thumbnail,
-          playlistId = playlist.playlistId,
-          owner = playlist.owner,
-          title = playlist.title;
-
-      res.json({ _id: _id, exposed: exposed, thumbnail: thumbnail, playlistId: playlistId, owner: owner, title: title } || {});
+      res.json(playlist.excludeKeys('playlistItems') || {});
     }
   });
 }
@@ -162,7 +177,9 @@ function playlistItemParam(req, res, next, itemId) {
     return String(item._id) === itemId;
   });
 
-  req.playlistItem = playlistItem;
+  if (playlistItem) {
+    req.playlistItem = playlistItem;
+  }
   next();
 }
 //# sourceMappingURL=playlistsController.js.map
