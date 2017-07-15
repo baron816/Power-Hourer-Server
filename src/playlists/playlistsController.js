@@ -75,6 +75,32 @@ export function playlistItemUpdate(req, res, next) {
   });
 }
 
+export function playlistItemDelete(req, res, next) {
+  const playlist = req.playlist;
+  const item = req.playlistItem;
+
+  Playlist.update( {_id: playlist._id}, { $pull: { playlistItems: {_id: item._id } } }, function (err) {
+      if (err) {
+        next();
+      } else {
+        res.json(item._id);
+      }
+  } );
+}
+
+export function playlistItemAdd(req, res, next) {
+  const playlist = req.playlist;
+  const item = req.body;
+
+  Playlist.update( {_id: playlist._id}, { $push: { playlistItems: item } }, function (err) {
+    if (err) {
+      next();
+    } else {
+      res.json(item);
+    }
+  });
+}
+
 export function moveItemUpdate(req, res) {
   const playlist = req.playlist;
 
@@ -119,6 +145,8 @@ export function playlistItemParam(req, res, next, itemId) {
   const playlist = req.playlist;
   const playlistItem = playlist.playlistItems.find((item) => String(item._id) === itemId);
 
-  req.playlistItem = playlistItem;
+  if (playlistItem) {
+    req.playlistItem = playlistItem;
+  }
   next();
 }

@@ -9,7 +9,9 @@ import {
   playlistItemParam,
   moveItemUpdate,
   playlistUpdate,
-  playlistIncrementPlayCount
+  playlistIncrementPlayCount,
+  playlistItemDelete,
+  playlistItemAdd
 } from './playlistsController';
 import { decodeToken, authorizeUser } from '../auth/auth';
 
@@ -25,7 +27,8 @@ playlistsRouter.route('/')
   .post(decodeToken(), playlistsCreate);
 
 playlistsRouter.route('/:id/playlistItems')
-  .get(playlistItems);
+  .get(playlistItems)
+  .put(authorize, playlistItemAdd);
 
 playlistsRouter.route('/:id/incrementPlayCount')
   .put(playlistIncrementPlayCount);
@@ -38,6 +41,7 @@ playlistsRouter.route('/:id/moveItem')
   .put(authorize, moveItemUpdate);
 
 playlistsRouter.route('/:id/playlistItems/:itemId')
-  .put(authorize, playlistItemUpdate);
+  .put(authorize, playlistItemUpdate)
+  .delete(authorize, playlistItemDelete);
 
 export default playlistsRouter;
